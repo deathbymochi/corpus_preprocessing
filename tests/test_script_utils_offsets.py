@@ -1,6 +1,6 @@
 """Tests for the offset functions in the script_utils module"""
 
-import sys,os
+import sys, os
 sys.path.insert(0, os.path.abspath(__file__ + "/../../"))
 import unittest
 from corpus_preprocessing import script_utils as off

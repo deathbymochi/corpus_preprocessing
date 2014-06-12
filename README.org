@@ -112,3 +112,4 @@ an appropriate pair of sample texts for the filtered script yet.
    text into the desired format
  - Add sample texts/examples to demonstrate scripts on
  - Look into possible ways to boost performance
+ - Look at adding other parameters as possible user inputs

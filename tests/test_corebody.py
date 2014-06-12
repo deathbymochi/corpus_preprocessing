@@ -1,6 +1,6 @@
 """Tests for the corebody module"""
 
-import sys,os
+import sys, os
 sys.path.insert(0, os.path.abspath(__file__ + "/../../"))
 import unittest
 from mockito import when, mock
@@ -30,17 +30,17 @@ class TestRawCorpusClass(unittest.TestCase):
     	    [None, ['an', 'apple', 'a', 'day']],
     	    [None, ['three', 'apples', 'a', 'week']],
     	    [None, ['doctors', 'stay', 'away']]]
-    
+
     	self.data_withids = '1\tan|apple|a|day\n2\tthree|apples|a|week\n \
 		                    3\tdoctors|stay|away\n'
     	self.corpus_noids = [
     	    [1, ['an', 'apple', 'a', 'day']],
     	    [2, ['three', 'apples', 'a', 'week']],
     	    [3, ['doctors', 'stay', 'away']]]
-    
+
     	set_mock_open(self.data_noids)
     	set_mock_open(self.data_withids)
-    
+
     	set_mock_codecs_open(self.data_noids)
     	set_mock_codecs_open(self.data_withids)
 
