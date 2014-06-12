@@ -49,12 +49,6 @@ class TestRawCorpusClass(unittest.TestCase):
 		obj_ut = mod_ut.RawCorpus(self.data_noids)
 		self.assertIsInstance(obj_ut, mod_ut.RawCorpus)
 
-	def test_num_docs(self):
-		"""Tests that RawCorpus counts num_docs correctly"""
-		obj_ut1 = mod_ut.RawCorpus(self.data_noids)
-		self.assertEqual(obj_ut1.num_docs, 3)
-		obj_ut2 = mod_ut.RawCorpus(self.data_withids)
-		self.assertEqual(obj_ut2.num_docs, 3)
 
 if __name__ == "__main__":
 	unittest.main()
