@@ -42,7 +42,7 @@ This script performs a more complex analysis by comparing your target sample wit
  - p-value = maximum p-value from calculating a t-test on the occurrence of a phrase on your target sample vs your non-target sample; default is 0.25
 
 1. Texts from both samples are reduced to bodies of single words; rare
-words are kicked out.
+   words are kicked out.
 2. Then, t-tests are conducted between the two samples on the single
    words retained from (1)
 3. A generous p-value threshold is used to omit words that occur with
@@ -71,8 +71,8 @@ words are kicked out.
  - 'top_trigrams.txt' is outputted to your working directory; this
    contains:
    - col 1: tokens from the core language body of the corpus
-   - col 2: p-values from conducting t-tests comparing token counts on the
-   target sample vs the filter sample
+   - col 2: p-values from conducting t-tests comparing token counts on
+     the target sample vs the filter sample
    - col 3: document frequencies for the target texts
    - col 4: document frequencies for the filter texts
  - Intermediate files are outputted to wherever the original .txt
