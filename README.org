@@ -1,0 +1,18 @@
+* Intro 
+
+The goal of these two Python scripts (text_processing_simple.py and text_processing_filtered.py) is to preprocess samples of text data in order to parse out 'significant language.' How 'significant langauge' is defined depends on which script you use.
+
+* text_processing_simple.py:
+
+This script performs a simple analysis that will return the top 200 most frequently occurring phrases (from one to three words long) from your sample, and how many documents (samples) they occurred on.
+
+* text_processing_filtered.py:
+
+This script performs a more complex analysis by comparing your target sample with a non-target sample in order to filter out 'meaningless' language (aka language you are not interested in because they occur with the same incidence on your target and non-target samples).  The script returns a list of all phrases that meet given thresholds to be considered 'significant', ordered by significance. These thresholds are:
+ - minimum docnum = minimum number of documents in your target sample a phrase has occurred on; given by user input
+ - multiplier = how many more times a phrase has occurred on documents in your target sample vs documents in your non-target sample; default is 2
+ - p-value = maximum p-value from calculating a t-test on the occurrence of a phrase on your target sample vs your non-target sample; default is 0.25
+
+* How to Use
+
+Both scripts can be run from the command line; they will prompt for user inputs when needed.
