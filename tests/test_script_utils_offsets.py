@@ -1,4 +1,5 @@
-"""Tests for offsets.py functions"""
+"""Tests for the offset functions in the script_utils module"""
+
 import sys,os
 sys.path.insert(0, os.path.abspath(__file__ + "/../../"))
 import unittest

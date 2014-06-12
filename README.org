@@ -4,15 +4,111 @@ The goal of these two Python scripts (text_processing_simple.py and text_process
 
 * text_processing_simple.py:
 
-This script performs a simple analysis that will return the top 200 most frequently occurring phrases (from one to three words long) from your sample, and how many documents (samples) they occurred on.
+** Basic Idea
+This script performs a simple analysis that will return the top 200
+most frequently occurring phrases (from one to three words long) 
+from your sample, and how many documents (samples) they occurred on.
+
+** Details
+*** Inputs
+ - A .txt file containing your sample of texts, each text in its own
+   row, and no header. The texts should be cleaned so that each word
+   is delimited by a specific character (EX: '|'). The file can have 
+   an ID column in the first column (so then texts are in the second 
+   column), or just a single column containing the texts
+ - Parameters for setting threshold on which single words to keep:
+   - Minimum threshold = min number of texts a word has to appear in
+     to be kept
+   - Maximum threshold = max number of texts a word is allowed to 
+     appear in to be kept
+*** Outputs
+ - 'top200_trigrams.txt' is outputted to your working directory;
+   this contains the top 200 most commonly occurring tokens and 
+   their document frequency
+ - Intermediate files are outputted to wherever the original .txt
+   file was stored. These are .txt files that contain:
+   - Doc frequencies for all single words in the original corpus
+   - Doc frequencies for all uni, bi, and trigrams in the core
+     language body of the corpus
+   - The trigram versions of the original texts
+ - A log file called 'simple.log' is outputted to your working directory
 
 * text_processing_filtered.py:
 
+** Basic Idea
 This script performs a more complex analysis by comparing your target sample with a non-target sample in order to filter out 'meaningless' language (aka language you are not interested in because they occur with the same incidence on your target and non-target samples).  The script returns a list of all phrases that meet given thresholds to be considered 'significant', ordered by significance. These thresholds are:
  - minimum docnum = minimum number of documents in your target sample a phrase has occurred on; given by user input
  - multiplier = how many more times a phrase has occurred on documents in your target sample vs documents in your non-target sample; default is 2
  - p-value = maximum p-value from calculating a t-test on the occurrence of a phrase on your target sample vs your non-target sample; default is 0.25
 
+1. Texts from both samples are reduced to bodies of single words; rare
+words are kicked out.
+2. Then, t-tests are conducted between the two samples on the single
+   words retained from (1)
+3. A generous p-value threshold is used to omit words that occur with
+   similar frequency on both samples; these words are deleted from
+   both samples. (Here we're just trying to kick out words that are
+   obviously irrelevant, not trying to draw any inferences)
+4. Trigrams are created on both reduced samples; this performs
+   faster than just creating trigrams on the full raw text since
+   there are 'holes' everywhere that can be skipped over
+5. t-tests are conducted between the two trigram'd samples created
+   from (4) and results are outputted.
+
+** Details
+*** Inputs
+ - A .txt file containing your sample of your /target/ texts, each text in its own
+   row, and no header. The texts should be cleaned so that each word
+   is delimited by a specific character (EX: '|'). The file can have 
+   an ID column in the first column (so then texts are in the second 
+   column), or just a single column containing the texts
+ - A .txt file containing your /filter/ sample of texts, same format
+   as above. 
+ - Parameters for setting threshold on which single words to keep:
+   - Minimum threshold = min number of texts a word has to appear in
+     to be kept
+*** Outputs
+ - 'top_trigrams.txt' is outputted to your working directory; this
+   contains:
+   - col 1: tokens from the core language body of the corpus
+   - col 2: p-values from conducting t-tests comparing token counts on the
+   target sample vs the filter sample
+   - col 3: document frequencies for the target texts
+   - col 4: document frequencies for the filter texts
+ - Intermediate files are outputted to wherever the original .txt
+   file was stored. These are .txt files that contain:
+   - Doc frequencies for all single words in the original corpus for 
+     each sample
+   - t-test results for comparing single words between the two samples
+   - Doc frequencies for all uni, bi, and trigrams in the core
+     language body of the corpus for each sample
+   - The trigram versions of the original texts for each sample
+
+* Notes
+ - Three-word phrases are reduced so that the middle word is a free
+   word and is represented by a dash (EX: 'cats are animals' 
+   becomes 'cats - animals')
+ - Default file encoding is cp1252 in the scripts due to usage with
+   files from Windows applications.  Default encoding is utf-8 in the modules 
+
 * How to Use
 
-Both scripts can be run from the command line; they will prompt for user inputs when needed.
+Both scripts can be run from the command line: 
+#+BEGIN_EXAMPLE
+python text_processing_filtered.py
+#+END_EXAMPLE
+
+They will prompt for user inputs when needed.
+
+There is an example file containing public Congress transcripts in
+sample_texts that you can run the simple script on.  Haven't put up
+an appropriate pair of sample texts for the filtered script yet.
+
+* To do's
+ - Integrate scripts somehow - seems redundant to have two separate
+   scripts, when functionality and inputs are similar
+ - Get the file encoding to be a user input also
+ - Introduce steps prior to these scripts to help clean/standardize
+   text into the desired format
+ - Add sample texts/examples to demonstrate scripts on
+ - Look into possible ways to boost performance

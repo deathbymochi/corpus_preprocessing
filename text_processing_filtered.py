@@ -1,7 +1,7 @@
 # Script to generate 'most important' one-, two-, and three-word
-# phrases for a sample of texts (as a single file with rows of texts), 
+# phrases for a sample of texts (as a single file with rows of texts),
 # using a second sample of texts as a filter
-# 
+#
 # Script prompts for user input for file names and other arguments
 #------------------------------------------------------------------
 
@@ -110,7 +110,7 @@ def main():
     # create core body of single words from target texts,
     # save single word dfs to file
     corebody_params = user_input_corebody_params()
-    corebody_params[1]['encoding'] = 'latin1'
+    corebody_params[1]['encoding'] = 'cp1252'
 
     target_file = corebody_params[0][0]
     delimiter = corebody_params[1]['delimiter']

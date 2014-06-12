@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # Script to return most frequently occurring one-, two-, and
-# three-word phrases in a sample  of texts (as a file w/ rows 
+# three-word phrases in a sample  of texts (as a file w/ rows
 # of texts) using user input for file names and other arguments
 #------------------------------------------------------------------
 import corpus_preprocessing.core.corebody as core
@@ -106,7 +106,7 @@ def main():
 
     # create core body of single words, save single word dfs to file
     corebody_params = user_input_corebody_params()
-    corebody_params[1]['encoding'] = 'latin1'
+    corebody_params[1]['encoding'] = 'cp1252'
 
     target_file = corebody_params[0][0]
     delimiter = corebody_params[1]['delimiter']
@@ -117,7 +117,7 @@ def main():
     has_ids = corebody_params[2]
 
     corebody = core.create_corebody(*corebody_params[0], **corebody_params[1])
-    core_words = [word for (id, word) in corebody.items()]
+    core_words = [word.decode(encoding) for (id, word) in corebody.items()]
 
     # using core body of single words to edit out too rare or too common
     # words, break texts down into trigrams, save trigram'd texts to file

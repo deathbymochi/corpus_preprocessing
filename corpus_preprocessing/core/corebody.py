@@ -1,7 +1,7 @@
 """
 This module  contains functions for assessing the core language for a body of text,
 including:
-  - creating a body of core language from texts that omits rare and super-common 
+  - creating a body of core language from texts that omits rare and super-common
     tokens
   - generating a list of tokens that should not be included in the core language
   - saving document frequencies of tokens kept in the body of core language
@@ -24,7 +24,7 @@ class RawCorpus(object):
     - delimiter = if there are IDs in the first column, what is the
       column separater (default is tab); if only a single column, put
       'None'
-    - word_sep = character that separates each word in the text text 
+    - word_sep = character that separates each word in the text text
       (default is '|')
     - encoding = what encoding the text file is in; default is utf-8
     """
@@ -43,11 +43,11 @@ class RawCorpus(object):
         def _line_edit(string):
             string = re.sub(r'(\n|\r)', '', string)
             return string
-        
+
         with codecs.open(self.file_name, 'r', self.encoding) as fo:
             if self.has_header:
                 next(fo)
-            
+
             for line in fo:
                 if self.delimiter is None:
                     text_id = None
@@ -74,12 +74,13 @@ class RawCorpus(object):
                         self.logger.debug('Yields: %s',
                                           {'id': text_id, 'words': text_words})
 
-                        yield [text_id, text_words]
+                yield [text_id, text_words]
 
-def make_simple_core(raw_corp, min_bound=0, max_bound=1.0, tokens_limit=None):
+def make_simple_core(raw_corp, min_bound=0, max_bound=1.0, tokens_limit=None,
+                     encoding='utf-8'):
     """Given a corpus generator object, makes a simple core body of
     single words by using filter methods from gensim Dictionary object
-    
+
     Inputs:
     - raw_corp = RawCorpus object, which is corpus of all your texts
     - min_bound = minimum number of docs (if int) or percentage of docs
@@ -90,30 +91,31 @@ def make_simple_core(raw_corp, min_bound=0, max_bound=1.0, tokens_limit=None):
       default is 1.0, aka 100%
     - tokens_limit = maximum number of tokens resulting core body should
       contain; default is None (no limit)
+    - encoding = encoding of text file raw_corp was built on
     """
     MOD_LOGGER.info('Received call to "make_simple_core"')
-    
+
     # Encode unicode tokens in raw_corp back to byte strings - can't keep tokens in
     # unicode format because gensim Dictionary object expects byte strings
     corp_gen = (
-    	[token.encode('utf-8')
+    	[token.encode(encoding)
     	for token in x[1]]
     	for x in raw_corp)
-    
+
     raw_dict = gs.corpora.Dictionary(corp_gen)
-    
+
     if type(min_bound) is float:
     	min_bound = min_bound * raw_corp.num_docs
-    
+
     if type(max_bound) is int:
     	max_bound = float(max_bound) / raw_corp.num_docs
-    
+
     MOD_LOGGER.debug('Thresholds used: %s',
     	{'min': min_bound, 'max': max_bound})
-    
+
     raw_dict.filter_extremes(min_bound, max_bound, tokens_limit)
     raw_dict.compactify()
-    
+
     return raw_dict
 
 def get_bad_ids_from_gs_dict(gs_dict, min_bound, max_bound):
@@ -128,7 +130,7 @@ def get_bad_ids_from_gs_dict(gs_dict, min_bound, max_bound):
         	or gs_dict.dfs[id] > max_bound
         )
     ]
-    
+
     return bad_ids
 
 def get_wordlist_using_token_ids(gs_dict, token_ids):
@@ -148,7 +150,7 @@ def delete_first_col_from_file(file_name):
 
 def add_header_to_file(file_name, header_space_sep):
     """Adds a header to a file that already contains data in it
-    
+
     Inputs:
     - file_name = file you want to add a header to
     - header_space_sep = string that contains your header, separated by
@@ -171,7 +173,7 @@ def write_dfs_to_file(corebody, file_name, ids_keep=None, ids_remove=None,
     add_header_to_file(file_name, header)
 
 def create_corebody(text_file, new_filename=None, delimiter='\t',
-                    word_sep='|', min_docnum=0, max_docnum=1.0, 
+                    word_sep='|', min_docnum=0, max_docnum=1.0,
                     tokens_limit=None, encoding='utf-8'):
     """Creates core body of language for text sample (all words
     in sample meeting a minimum document threshold, and their document
@@ -179,7 +181,7 @@ def create_corebody(text_file, new_filename=None, delimiter='\t',
     corebody file containing words kept in corebody, and a badwords file
     containing words that were excluded (naming = text_file +
     {'badwords'|'corebody'})
-    
+
     Inputs:
     - text_file = file containing texts
     - delimiter = char separating cols ('None' if only one col in data)
@@ -193,22 +195,22 @@ def create_corebody(text_file, new_filename=None, delimiter='\t',
     MOD_LOGGER.info('Making text generator object...')
     text_generator = RawCorpus(
     	text_file, delimiter, word_sep, encoding=encoding)
-    
+
     MOD_LOGGER.info('Text generator created on %s', text_file)
-    
+
     MOD_LOGGER.info('Creating core body of all tokens...')
     text_corebody = make_simple_core(text_generator)
-    
+
     # write file containing all token dfs
     if new_filename is None:
     	alldfs_file = text_file[:-4] + '_dfs-all.txt'
     else:
     	alldfs_file = new_filename
-    
+
     write_dfs_to_file(text_corebody, alldfs_file)
-    
+
     MOD_LOGGER.info('Wrote dfs of all tokens to %s', alldfs_file)
-    
+
     # filter out bad words
     ## filter_extremes() method of gensim Dictionary object requires max
     ## threshold to be given as percent of all docs
@@ -216,9 +218,9 @@ def create_corebody(text_file, new_filename=None, delimiter='\t',
     	max_bound = 1.0
     else:
     	max_bound = float(max_docnum) / text_generator.num_docs
-    
+
     MOD_LOGGER.info('Filtering core body using: %s',
     	{'min docs': min_docnum, 'max perc': max_bound})
     text_corebody.filter_extremes(min_docnum, max_bound, tokens_limit)
-    
+
     return text_corebody

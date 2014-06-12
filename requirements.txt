@@ -1,5 +1,6 @@
 argparse==1.2.1
 gensim==0.10.0
+mockito==0.5.2
 numpy==1.8.1
 scipy==0.14.0
 six==1.7.2
