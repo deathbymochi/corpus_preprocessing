@@ -1,11 +1,13 @@
+#!/usr/bin/python
+#
 # Script to return most frequently occurring one-, two-, and
 # three-word phrases in a sample  of texts (as a file w/ rows 
 # of texts) using user input for file names and other arguments
 #------------------------------------------------------------------
-import corebody as core
-import trigrams as trigrams
+import corpus_preprocessing.core.corebody as core
+import corpus_preprocessing.core.trigrams as trigrams
 from distutils import util
-import script_utils as script
+import corpus_preprocessing.script_utils as script
 import logging
 
 format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -128,7 +130,7 @@ def main():
     corebody_trigrams = core.create_corebody(trigrams_file,
         tokens_limit=NUM_TRIGRAM_TOKENS, encoding=encoding)
 
-    top_trigrams_file = 'top' str(NUM_TRIGRAM_TOKENS) + '_trigrams.txt')
+    top_trigrams_file = ('top' + str(NUM_TRIGRAM_TOKENS) + '_trigrams.txt')
 
     LOGGER.info('Writing top %s trigrams to %s', NUM_TRIGRAM_TOKENS,
         top_trigrams_file)

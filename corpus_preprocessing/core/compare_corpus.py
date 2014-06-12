@@ -1,4 +1,10 @@
-## Functions for comparing two corpuses with each other
+""" 
+This module contains functions for comparing two corpuses with each other,
+including:
+- running t-tests on token occurrences between the two corpuses
+- filtering out tokens above some p-value threshold, and writing 
+  to file the remaiing tokens
+"""
 
 import gensim as gs
 import numpy as np
@@ -10,25 +16,25 @@ import logging
 MOD_LOGGER = logging.getLogger('text_processing.compare')
 
 def get_token2df(gs_dict):
-	""" Takes a gensim Dictionary object and returns
-	a normal dictionary of {token: df}
-
-	Inputs:
-	- gs_dict = gensim Dictionary object
-	"""
-	return {word: gs_dict.dfs[word_id] for (word_id, word) in gs_dict.items()}
+    """ Takes a gensim Dictionary object and returns
+    a normal dictionary of {token: df}
+    
+    Inputs:
+    - gs_dict = gensim Dictionary object
+    """
+    return {word: gs_dict.dfs[word_id] for (word_id, word) in gs_dict.items()}
 
 def merge_two_cores(gs_dict_1, gs_dict_2, join='outer'):
     """ Takes two gensim Dictionary objects and merges them
-	into a single normal dictionary of
-	{token: [df in gs_dict_1, df in gs_dict_2]}
-
-	Inputs:
-	- gs_dict_1, gs_dict_2 = gensim Dictionary objects
-	- join = how you want to join the tokens: 'inner' gives back only
-	  tokens that are common between the two; 'outer' gives back all
-	  tokens in both cores; 'left' joins on gs_dict_1; 'right' joins
-	  on gs_dict_2
+    into a single normal dictionary of
+    {token: [df in gs_dict_1, df in gs_dict_2]}
+    
+    Inputs:
+    - gs_dict_1, gs_dict_2 = gensim Dictionary objects
+    - join = how you want to join the tokens: 'inner' gives back only
+      tokens that are common between the two; 'outer' gives back all
+      tokens in both cores; 'left' joins on gs_dict_1; 'right' joins
+      on gs_dict_2
     """
     core_1 = get_token2df(gs_dict_1)
     core_2 = get_token2df(gs_dict_2)
@@ -39,13 +45,13 @@ def merge_two_cores(gs_dict_1, gs_dict_2, join='outer'):
         len(core_1), len(core_2), join)
 
     if join == 'outer':
-		tokens_set = set(core_1.keys() + core_2.keys())
+        tokens_set = set(core_1.keys() + core_2.keys())
     elif join == 'inner':
-		tokens_set = set(token for token in core_1 if token in core_2)
+        tokens_set = set(token for token in core_1 if token in core_2)
     elif join == 'left':
-		tokens_set = set(core_1)
+        tokens_set = set(core_1)
     elif join == 'right':
-		tokens_set = set(core_2)
+        tokens_set = set(core_2)
 
     merged_core = {
         token: [core_1.get(token, 0), core_2.get(token, 0)]
@@ -70,7 +76,7 @@ def make_binary_array(num_ones, total_length):
         list(np.zeros(total_length - num_ones)))
 
 def df_ttest_pval_generator(merged_core, size_sample1, size_sample2,
-    min_num=10, min_multiplier=0, pval_threshold=1):
+                            min_num=10, min_multiplier=0, pval_threshold=1):
     """ Takes a dictionary of {word: [doc frequency in sample 1,
     doc frequency in sample 2]} and conducts t-tests on dfs for each
     word; is a generator yielding [word, ttest pvalue]
@@ -121,8 +127,9 @@ def df_ttest_pval_generator(merged_core, size_sample1, size_sample2,
             if not math.isnan(pval) and pval < pval_threshold:
                 yield [word, pval]
 
-def write_df_ttest_to_file(merged_core, size_sample1, size_sample2, file_name=
-    None, min_num=10, min_multiplier=0, pval_threshold=1, handle=None):
+def write_df_ttest_to_file(merged_core, size_sample1, size_sample2, 
+                           file_name=None, min_num=10, min_multiplier=0, 
+                           pval_threshold=1, handle=None):
     """ Takes a dictionary of {word: [doc freq in sample 1, doc freq in sample
     2]} and writes the results of conducting t-tests on dfs for each word to
     txt file
@@ -159,7 +166,7 @@ def write_df_ttest_to_file(merged_core, size_sample1, size_sample2, file_name=
     MOD_LOGGER.info('Pvals written to %s', file_name)
 
 def words_below_pval_generator(file_name, pval_threshold=0.5, delimiter=',',
-    encoding='utf-8'):
+                               encoding='utf-8'):
     """ Creates generator object on file containing each word's pvalue,
     accessing only the words whose pvalues are below a given threshold
 
@@ -175,15 +182,15 @@ def words_below_pval_generator(file_name, pval_threshold=0.5, delimiter=',',
         file_name, pval_threshold)
 
     for line in open(file_name):
-		if delimiter is None:
-			word, pval = line.split()[:2]
-		else:
-			word, pval = line.split(delimiter)[:2]
+        if delimiter is None:
+            word, pval = line.split()[:2]
+        else:
+            word, pval = line.split(delimiter)[:2]
         # MOD_LOGGER.debug('Line in file contains: %s',
         #    {'word': word, 'pval': pval})
 
-		if float(pval) <= pval_threshold:
-			yield word.decode(encoding)
+        if float(pval) <= pval_threshold:
+            yield word.decode(encoding)
 
 
 

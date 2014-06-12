@@ -5,12 +5,12 @@
 # Script prompts for user input for file names and other arguments
 #------------------------------------------------------------------
 
-import corebody as core
-import trigrams as edit
-import compare_corpus as compare
+import corpus_preprocessing.core.corebody as core
+import corpus_preprocessing.core.trigrams as edit
+import corpus_preprocessing.core.compare_corpus as compare
 from distutils import util
 import logging
-import script_utils as script
+import corpus_preprocessing.script_utils as script
 
 format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
